@@ -1,6 +1,8 @@
 #include "typewise-alert.h"
 #include <stdio.h>
 
+checkAndAlert(TO_EMAIL, batteryChar, 45.0, "user@example.com");
+
 // Define constants
 #define ALERT_FUNCTION_COUNT 2
 #define CONTROLLER_HEADER 0xfeed
