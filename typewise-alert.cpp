@@ -11,11 +11,19 @@ typedef struct {
 } TemperatureLimit;
 
 // Define the temperature limits for each cooling type
-TemperatureLimit coolTypeTable[] = {
-    [PASSIVE_COOLING] = {0, 35},
-    [HI_ACTIVE_COOLING] = {0, 45},
-    [MED_ACTIVE_COOLING] = {0, 40}
-};
+TemperatureLimit coolTypeTable[3];
+
+// Function to initialize temperature limits
+void initTemperatureLimits() {
+    coolTypeTable[PASSIVE_COOLING].lowerLimit = 0;
+    coolTypeTable[PASSIVE_COOLING].upperLimit = 35;
+
+    coolTypeTable[HI_ACTIVE_COOLING].lowerLimit = 0;
+    coolTypeTable[HI_ACTIVE_COOLING].upperLimit = 45;
+
+    coolTypeTable[MED_ACTIVE_COOLING].lowerLimit = 0;
+    coolTypeTable[MED_ACTIVE_COOLING].upperLimit = 40;
+}
 
 // Infer the breach type based on the temperature and limits
 BreachType inferBreach(double value, double lowerLimit, double upperLimit) {
@@ -34,11 +42,18 @@ BreachType classifyTemperatureBreach(CoolingType coolingType, double temperature
     return inferBreach(temperatureInC, limits.lowerLimit, limits.upperLimit);
 }
 
+// Function declarations for alert actions
+void sendToController(BreachType breachType);
+void sendToEmail(BreachType breachType);
+
 // Array of alert functions indexed by alert target type
-AlertFunction alertFunctions[] = {
-    [TO_CONTROLLER] = sendToController,
-    [TO_EMAIL] = sendToEmail
-};
+AlertFunction alertFunctions[2];
+
+// Function to initialize alert functions
+void initAlertFunctions() {
+    alertFunctions[TO_CONTROLLER] = sendToController;
+    alertFunctions[TO_EMAIL] = sendToEmail;
+}
 
 // Check and alert based on the temperature and alert target
 void checkAndAlert(AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC) {
@@ -63,11 +78,14 @@ typedef struct {
 } EmailMessage;
 
 // Define the email messages for each breach type
-EmailMessage emailMessages[] = {
-    [TOO_LOW] = {"Hi, the temperature is too low"},
-    [TOO_HIGH] = {"Hi, the temperature is too high"},
-    [NORMAL] = {""}
-};
+EmailMessage emailMessages[3];
+
+// Function to initialize email messages
+void initEmailMessages() {
+    emailMessages[TOO_LOW].message = "Hi, the temperature is too low";
+    emailMessages[TOO_HIGH].message = "Hi, the temperature is too high";
+    emailMessages[NORMAL].message = "";
+}
 
 // Function to send alert via email
 void sendToEmail(BreachType breachType) {
@@ -76,4 +94,19 @@ void sendToEmail(BreachType breachType) {
         printf("To: %s\n", recipient);
         printf("%s\n", emailMessages[breachType].message);
     }
+}
+
+// Main function or initialization function
+int main() {
+    // Initialize all necessary data
+    initTemperatureLimits();
+    initAlertFunctions();
+    initEmailMessages();
+
+    // Example usage
+    BatteryCharacter batteryChar;
+    batteryChar.coolingType = HI_ACTIVE_COOLING;
+    checkAndAlert(TO_EMAIL, batteryChar, 50.0);
+
+    return 0;
 }
