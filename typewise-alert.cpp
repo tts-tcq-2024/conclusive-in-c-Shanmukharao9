@@ -1,6 +1,8 @@
 #include "typewise-alert.h"
 #include <stdio.h>
 
+//Function pointer for AlertTarget
+typedef void (*AlertFunction)(BreachType);
 
 //Data Structure for temperatue Limits
 typedef struct{
